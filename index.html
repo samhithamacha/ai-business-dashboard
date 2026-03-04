@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Drishti</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'Inter',sans-serif;background:#060D1A;color:#fff;overflow-x:hidden;}
+
+/* ══ NAV ══ */
+nav{position:fixed;top:0;left:0;right:0;z-index:300;display:flex;align-items:center;justify-content:space-between;padding:22px 56px;transition:all 0.4s;}
+nav.scrolled{background:rgba(6,13,26,0.92);backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,0.06);}
+.nav-logo{font-size:1.2rem;font-weight:800;letter-spacing:-0.02em;color:#fff;}
+.nav-logo span{color:#5BA3D0;}
+.nav-links{display:flex;gap:40px;list-style:none;}
+.nav-links a{font-size:0.74rem;font-weight:500;color:rgba(255,255,255,0.4);text-decoration:none;letter-spacing:0.1em;text-transform:uppercase;transition:color 0.2s;}
+.nav-links a:hover{color:#fff;}
+.nav-cta{background:transparent;color:#fff;border:1px solid rgba(255,255,255,0.2);padding:9px 24px;border-radius:40px;font-size:0.74rem;font-weight:600;letter-spacing:0.06em;text-decoration:none;transition:all 0.25s;}
+.nav-cta:hover{background:#fff;color:#060D1A;}
+
+/* ══════════════════════════
+   HERO
+══════════════════════════ */
+#hero{
+  position:relative;width:100%;height:100vh;
+  display:flex;align-items:center;justify-content:center;
+  overflow:hidden;background:#060D1A;
+}
+
+/* Deep radial navy background */
+.hero-bg{
+  position:absolute;inset:0;
+  background:radial-gradient(ellipse 80% 70% at 50% 50%,#1A2E50 0%,#0E1E38 35%,#07121F 65%,#060D1A 100%);
+  z-index:0;
+}
+
+/* Subtle star field */
+#stars{position:absolute;inset:0;z-index:1;pointer-events:none;}
+
+/* Eye wrapper — FULL WIDTH */
+#eye-wrap{
+  position:absolute;
+  left:50%;top:50%;
+  transform:translate(-50%,-50%);
+  width:min(96vw,980px);
+  z-index:5;
+  pointer-events:none;
+}
+#eye-svg{width:100%;height:auto;overflow:visible;}
+
+/* Eye ambient glow */
+.eye-aura{
+  position:absolute;
+  left:50%;top:50%;transform:translate(-50%,-50%);
+  width:min(100vw,1100px);height:min(50vw,520px);
+  border-radius:50%;
+  background:radial-gradient(ellipse,rgba(46,134,193,0.12) 0%,transparent 68%);
+  z-index:4;
+  animation:auraPulse 5s ease-in-out infinite;
+}
+@keyframes auraPulse{0%,100%{opacity:0.6;transform:translate(-50%,-50%) scale(1);}50%{opacity:1;transform:translate(-50%,-50%) scale(1.05);}}
+
+/* Hero name */
+.hero-txt{
+  position:relative;z-index:10;
+  text-align:center;pointer-events:none;
+  display:flex;flex-direction:column;align-items:center;
+}
+.hero-name{
+  font-size:clamp(5rem,16vw,14rem);
+  font-weight:900;letter-spacing:-0.06em;line-height:1;
+  background:linear-gradient(180deg,#fff 0%,#BDD5EA 50%,rgba(91,163,208,0.5) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  animation:nameReveal 2.2s cubic-bezier(0.16,1,0.3,1) both;
+  mix-blend-mode:screen;
+}
+@keyframes nameReveal{0%{opacity:0;transform:scale(0.88);letter-spacing:-0.12em;}100%{opacity:1;transform:scale(1);letter-spacing:-0.06em;}}
+.hero-sub{
+  font-size:clamp(0.7rem,1.4vw,0.85rem);font-weight:400;
+  letter-spacing:0.28em;text-transform:uppercase;
+  color:rgba(255,255,255,0.25);margin-top:20px;
+  animation:fadeUp 2s 1.2s both;
+}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
+
+/* Particles */
+#ptc{position:absolute;inset:0;z-index:3;pointer-events:none;overflow:hidden;}
+.pt{position:absolute;border-radius:50%;background:rgba(91,163,208,0.7);animation:ptUp linear infinite;}
+@keyframes ptUp{0%{transform:translateY(110vh) scale(0);opacity:0;}8%{opacity:1;}92%{opacity:0.2;}100%{transform:translateY(-12vh) scale(1.5);opacity:0;}}
+
+/* Scroll hint */
+.scroll-hint{position:absolute;bottom:36px;left:50%;transform:translateX(-50%);z-index:20;display:flex;flex-direction:column;align-items:center;gap:8px;animation:fadeUp 2s 2.2s both;}
+.s-line{width:1px;height:44px;background:linear-gradient(to bottom,transparent,rgba(255,255,255,0.25));animation:sLine 2.2s ease-in-out infinite;}
+@keyframes sLine{0%{transform:scaleY(0);transform-origin:top;}50%{transform:scaleY(1);transform-origin:top;}51%{transform:scaleY(1);transform-origin:bottom;}100%{transform:scaleY(0);transform-origin:bottom;}}
+.s-txt{font-size:0.58rem;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.18);}
+
+/* ══ TICKER ══ */
+.ticker{background:rgba(255,255,255,0.025);border-top:1px solid rgba(255,255,255,0.05);border-bottom:1px solid rgba(255,255,255,0.05);padding:14px 0;overflow:hidden;position:relative;z-index:10;}
+.tk-track{display:flex;animation:tkMove 30s linear infinite;white-space:nowrap;}
+@keyframes tkMove{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+.tk{display:inline-flex;align-items:center;gap:12px;padding:0 40px;font-size:0.7rem;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.28);}
+.tk-d{width:3px;height:3px;background:#5BA3D0;border-radius:50%;}
+
+/* ══════════════════════════
+   ABOUT
+══════════════════════════ */
+#about{
+  position:relative;min-height:100vh;
+  padding:120px 56px;
+  background:linear-gradient(to bottom,#060D1A,#0A1628);
+  overflow:hidden;display:flex;align-items:center;
+}
+
+/* Animated grid lines */
+.grid-lines{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden;}
+.gl{position:absolute;background:rgba(91,163,208,0.04);}
+.gl-v{width:1px;height:100%;top:0;animation:glFadeV 4s ease-in-out infinite;}
+.gl-h{height:1px;width:100%;left:0;animation:glFadeH 4s ease-in-out infinite;}
+@keyframes glFadeV{0%,100%{opacity:0.3;}50%{opacity:1;}}
+@keyframes glFadeH{0%,100%{opacity:0.3;}50%{opacity:1;}}
+
+/* Floating orbs */
+.orb{
+  position:absolute;border-radius:50%;
+  background:radial-gradient(circle,rgba(27,108,168,0.15),transparent);
+  animation:orbFloat ease-in-out infinite;
+  pointer-events:none;z-index:0;
+}
+@keyframes orbFloat{0%,100%{transform:translateY(0) scale(1);}50%{transform:translateY(-30px) scale(1.05);}}
+
+.about-inner{position:relative;z-index:2;max-width:1200px;margin:0 auto;width:100%;display:grid;grid-template-columns:1fr 1fr;gap:96px;align-items:start;}
+
+/* ══ SHARED STYLES ══ */
+.stag{display:inline-flex;align-items:center;gap:10px;font-size:0.65rem;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:#5BA3D0;margin-bottom:20px;}
+.stag::before{content:'';width:22px;height:1px;background:#5BA3D0;}
+.stitle{font-size:clamp(1.9rem,3.2vw,2.8rem);font-weight:800;letter-spacing:-0.03em;line-height:1.08;margin-bottom:26px;}
+.stitle em{font-style:normal;color:#5BA3D0;}
+.sbody{font-size:0.88rem;line-height:1.88;color:rgba(255,255,255,0.42);margin-bottom:14px;}
+
+/* Counter grid */
+.cnts{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:rgba(255,255,255,0.06);border-radius:12px;overflow:hidden;margin-top:40px;}
+.cnt{background:#060D1A;padding:24px 22px;transition:background 0.3s;position:relative;overflow:hidden;}
+.cnt::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(to right,transparent,#1B6CA8,transparent);transform:scaleX(0);transition:transform 0.4s;}
+.cnt:hover{background:rgba(27,108,168,0.1);}
+.cnt:hover::after{transform:scaleX(1);}
+.cnt-v{font-size:2.2rem;font-weight:900;letter-spacing:-0.04em;background:linear-gradient(135deg,#fff,#BDD5EA);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1;}
+.cnt-l{font-size:0.65rem;color:rgba(255,255,255,0.28);margin-top:6px;letter-spacing:0.04em;}
+
+/* Domain list */
+.dom{padding:20px 0;border-bottom:1px solid rgba(255,255,255,0.06);display:flex;gap:20px;align-items:flex-start;transition:all 0.3s;cursor:default;position:relative;}
+.dom:first-child{border-top:1px solid rgba(255,255,255,0.06);}
+.dom::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2px;background:#5BA3D0;transform:scaleY(0);transition:transform 0.3s;transform-origin:top;}
+.dom:hover::before{transform:scaleY(1);}
+.dom:hover .dom-nm{color:#fff;}
+.dom:hover .dom-n{color:#5BA3D0;}
+.dom-n{font-size:0.6rem;font-weight:700;color:rgba(255,255,255,0.18);min-width:20px;margin-top:3px;transition:color 0.3s;}
+.dom-nm{font-size:0.88rem;font-weight:700;color:rgba(255,255,255,0.62);margin-bottom:4px;transition:color 0.3s;}
+.dom-ds{font-size:0.78rem;color:rgba(255,255,255,0.28);line-height:1.65;}
+
+/* ══════════════════════════
+   SERVICES
+══════════════════════════ */
+#services{
+  position:relative;padding:120px 56px;
+  background:linear-gradient(to bottom,#0A1628,#060D1A);
+  overflow:hidden;
+}
+
+/* Animated data flow lines */
+.data-flow{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden;}
+.df-line{
+  position:absolute;height:1px;
+  background:linear-gradient(to right,transparent,rgba(91,163,208,0.3),transparent);
+  animation:dfMove linear infinite;
+  top:0;left:-100%;width:60%;
+}
+@keyframes dfMove{from{transform:translateX(0);}to{transform:translateX(350%)}}
+
+/* Hex grid background */
+.hex-bg{position:absolute;inset:0;z-index:0;pointer-events:none;opacity:0.03;}
+
+.svc-inner{position:relative;z-index:2;max-width:1200px;margin:0 auto;}
+.svc-hdr{margin-bottom:60px;}
+.svc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:rgba(255,255,255,0.05);border-radius:14px;overflow:hidden;}
+.svc{
+  background:#06101C;padding:36px 30px;
+  transition:background 0.35s,transform 0.35s;
+  position:relative;overflow:hidden;cursor:default;
+}
+/* Animated border reveal on hover */
+.svc::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(to right,#1B6CA8,#5BA3D0,#1B6CA8);transform:scaleX(0);transition:transform 0.4s;transform-origin:left;}
+.svc:hover::before{transform:scaleX(1);}
+.svc::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(27,108,168,0.08),transparent);opacity:0;transition:opacity 0.35s;}
+.svc:hover{background:#0C1A2C;}
+.svc:hover::after{opacity:1;}
+.svc-n{font-size:0.58rem;font-weight:700;color:rgba(255,255,255,0.15);letter-spacing:0.1em;margin-bottom:16px;}
+.svc-ic{
+  width:40px;height:40px;border-radius:10px;
+  background:rgba(27,108,168,0.12);border:1px solid rgba(91,163,208,0.12);
+  display:flex;align-items:center;justify-content:center;font-size:1.1rem;
+  margin-bottom:16px;transition:all 0.3s;
+}
+.svc:hover .svc-ic{background:rgba(27,108,168,0.3);border-color:rgba(91,163,208,0.4);box-shadow:0 0 20px rgba(91,163,208,0.2);}
+.svc-nm{font-size:0.9rem;font-weight:700;color:rgba(255,255,255,0.78);margin-bottom:10px;}
+.svc-ds{font-size:0.78rem;color:rgba(255,255,255,0.3);line-height:1.72;}
+.svc-tg{display:inline-block;margin-top:16px;font-size:0.58rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#5BA3D0;opacity:0.6;}
+
+/* ══════════════════════════
+   CTA
+══════════════════════════ */
+#cta{
+  position:relative;padding:130px 56px;
+  background:#060D1A;text-align:center;overflow:hidden;
+}
+/* Animated rings */
+.ring{
+  position:absolute;border-radius:50%;border:1px solid rgba(91,163,208,0.08);
+  left:50%;top:50%;transform:translate(-50%,-50%);
+  animation:ringPulse 4s ease-out infinite;
+}
+@keyframes ringPulse{0%{transform:translate(-50%,-50%) scale(0.8);opacity:0.8;}100%{transform:translate(-50%,-50%) scale(2.5);opacity:0;}}
+.cta-glow{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:600px;height:300px;background:radial-gradient(ellipse,rgba(27,108,168,0.15),transparent 70%);pointer-events:none;}
+.cta-inner{position:relative;z-index:2;max-width:680px;margin:0 auto;}
+.cta-t{font-size:clamp(2rem,4.5vw,3.2rem);font-weight:900;letter-spacing:-0.04em;line-height:1.06;margin-bottom:20px;}
+.cta-b{font-size:0.88rem;color:rgba(255,255,255,0.35);line-height:1.82;margin-bottom:44px;}
+.cta-btn{display:inline-flex;align-items:center;gap:10px;background:linear-gradient(135deg,#1B6CA8,#0D4F8B);color:#fff;padding:15px 44px;border-radius:50px;font-size:0.84rem;font-weight:700;letter-spacing:0.03em;text-decoration:none;box-shadow:0 0 40px rgba(27,108,168,0.3);transition:all 0.3s;position:relative;overflow:hidden;}
+.cta-btn::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,0.1),transparent);opacity:0;transition:opacity 0.3s;}
+.cta-btn:hover{box-shadow:0 0 70px rgba(27,108,168,0.55);transform:translateY(-2px);}
+.cta-btn:hover::before{opacity:1;}
+.cta-arr{transition:transform 0.3s;}
+.cta-btn:hover .cta-arr{transform:translateX(5px);}
+
+/* ══ FOOTER ══ */
+footer{position:relative;z-index:1;background:#040910;padding:26px 56px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid rgba(255,255,255,0.04);font-size:0.7rem;color:rgba(255,255,255,0.16);}
+.ft-logo{font-weight:800;color:rgba(255,255,255,0.55);font-size:0.85rem;letter-spacing:-0.02em;}
+.ft-logo span{color:#5BA3D0;}
+
+/* ══ REVEAL ANIMATIONS ══ */
+.reveal{opacity:0;transform:translateY(40px);transition:opacity 0.9s cubic-bezier(0.16,1,0.3,1),transform 0.9s cubic-bezier(0.16,1,0.3,1);}
+.reveal.visible{opacity:1;transform:translateY(0);}
+.reveal-left{opacity:0;transform:translateX(-40px);transition:opacity 0.9s cubic-bezier(0.16,1,0.3,1),transform 0.9s cubic-bezier(0.16,1,0.3,1);}
+.reveal-left.visible{opacity:1;transform:translateX(0);}
+.reveal-right{opacity:0;transform:translateX(40px);transition:opacity 0.9s cubic-bezier(0.16,1,0.3,1),transform 0.9s cubic-bezier(0.16,1,0.3,1);}
+.reveal-right.visible{opacity:1;transform:translateX(0);}
+.d1{transition-delay:0.1s;}.d2{transition-delay:0.22s;}.d3{transition-delay:0.34s;}.d4{transition-delay:0.46s;}.d5{transition-delay:0.58s;}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="nav">
+  <div class="nav-logo">Drishti<span>.</span></div>
+  <ul class="nav-links">
+    <li><a href="#hero">Home</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#services">Services</a></li>
+  </ul>
+  <a href="#cta" class="nav-cta">Get Started</a>
+</nav>
+
+<!-- ══ HERO ══ -->
+<section id="hero">
+  <div class="hero-bg"></div>
+  <canvas id="stars"></canvas>
+  <div id="ptc"></div>
+  <div class="eye-aura"></div>
+
+  <!-- BIG EYE SVG -->
+  <div id="eye-wrap">
+    <svg id="eye-svg" viewBox="0 0 1000 560" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="iG" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#1a3d75"/>
+          <stop offset="30%" stop-color="#1B6CA8"/>
+          <stop offset="65%" stop-color="#2980B9"/>
+          <stop offset="100%" stop-color="#0D2B5E"/>
+        </radialGradient>
+        <radialGradient id="pG" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#01060F"/>
+          <stop offset="70%" stop-color="#050D1A"/>
+          <stop offset="100%" stop-color="#0A1628"/>
+        </radialGradient>
+        <radialGradient id="scleraG" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#0D1E3A"/>
+          <stop offset="100%" stop-color="#06101E"/>
+        </radialGradient>
+        <radialGradient id="glint1" cx="30%" cy="28%" r="50%">
+          <stop offset="0%" stop-color="rgba(255,255,255,0.95)"/>
+          <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
+        </radialGradient>
+        <radialGradient id="glint2" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="rgba(255,255,255,0.4)"/>
+          <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
+        </radialGradient>
+        <filter id="irisBlur"><feGaussianBlur stdDeviation="1.5"/></filter>
+        <filter id="softGlow" x="-20%" y="-20%" width="140%" height="140%">
+          <feGaussianBlur stdDeviation="6" result="b"/>
+          <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+        <filter id="outerGlow" x="-30%" y="-30%" width="160%" height="160%">
+          <feGaussianBlur stdDeviation="18" result="b"/>
+          <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+        <clipPath id="eyeClip">
+          <path d="M 30,280 Q 500,-20 970,280 Q 500,580 30,280 Z"/>
+        </clipPath>
+      </defs>
+
+      <!-- Outer glow ring -->
+      <ellipse cx="500" cy="230" rx="480" ry="195" fill="none" stroke="rgba(91,163,208,0.06)" stroke-width="1" filter="url(#outerGlow)"/>
+      <ellipse cx="500" cy="230" rx="460" ry="178" fill="none" stroke="rgba(91,163,208,0.1)" stroke-width="0.5"/>
+      <ellipse cx="500" cy="230" rx="440" ry="162" fill="none" stroke="rgba(91,163,208,0.06)" stroke-width="0.5"/>
+
+      <!-- Eye white / sclera -->
+      <path d="M 30,230 Q 500,20 970,230 Q 500,440 30,230 Z" fill="url(#scleraG)"/>
+
+      <!-- Blood vessels (very subtle) -->
+      <g opacity="0.06" stroke="#c00" stroke-width="0.5" fill="none">
+        <path d="M 80,230 Q 150,210 200,220"/>
+        <path d="M 900,230 Q 840,215 800,222"/>
+        <path d="M 70,235 Q 130,245 170,238"/>
+      </g>
+
+      <!-- IRIS + everything inside clip -->
+      <g clip-path="url(#eyeClip)">
+        <!-- Iris base -->
+        <circle id="iris-c" cx="500" cy="230" r="145" fill="url(#iG)" filter="url(#softGlow)"/>
+
+        <!-- Iris limbal ring -->
+        <circle cx="500" cy="230" r="142" fill="none" stroke="#0D2B5E" stroke-width="6" opacity="0.8"/>
+
+        <!-- Iris texture — concentric rings -->
+        <circle cx="500" cy="230" r="130" fill="none" stroke="rgba(30,80,140,0.5)" stroke-width="1.2"/>
+        <circle cx="500" cy="230" r="118" fill="none" stroke="rgba(44,110,180,0.4)" stroke-width="0.8"/>
+        <circle cx="500" cy="230" r="105" fill="none" stroke="rgba(60,140,210,0.3)" stroke-width="0.6"/>
+        <circle cx="500" cy="230" r="90" fill="none" stroke="rgba(80,150,220,0.25)" stroke-width="0.5"/>
+
+        <!-- Iris fibers radial -->
+        <g id="fibers" opacity="0.3">
+          <line x1="500" y1="92" x2="500" y2="368" stroke="#5BA3D0" stroke-width="0.5" transform="rotate(0,500,230)"/>
+          <line x1="500" y1="92" x2="500" y2="368" stroke="#5BA3D0" stroke-width="0.5" transform="rotate(12,500,230)"/>
+          <line x1="500" y1="92" x2="500" y2="368" stroke="#5BA3D0" stroke-width="0.5" transform="rotate(24,500,230)"/>
+          <line x1="500" y1="92" x2="500" y2="368" stroke="#5BA3D0" stroke-width="0.5" transform="rotate(36,500,230)"/>
+          <line x1="500" y1="92" x2="500" y2="368" stroke="#5BA3D0" stroke-width="0.5" transform="rotate(48,500,230)"/>
+          <line x1="500" y1="92" x2="500" y2="368" stroke="#5BA3D0" stroke-width="0.5" transform="rotate(60,500,230)"/>
+          <line x1="500" y1="92" x2="500" y2="368" stroke="#5BA3D0" stroke-width="0.5" transform="rotate(72,500,230)"/>
+          <line x1="500" y1="92" x2="500" y2="368" stroke="#5BA3D0" stroke-width="0.5" transform="rotate(84,500,230)"/>
+          <line x1="500" y1="92" x2="500" y2="368" stroke="#5BA3D0" stroke-width="0.5" transform="rotate(96,500,230)"/>
+          <line x1="500" y1="92" x2="500" y2="368" stroke="#5BA3D0" stroke-width="0.5" transform="rotate(108,500,230)"/>
+          <line x1="500" y1="92" x2="500" y2="368" stroke="#5BA3D0" stroke-width="0.5" transform="rotate(120,500,230)"/>
+          <line x1="500" y1="92" x2="500" y2="368" stroke="#5BA3D0" stroke-width="0.5" transform="rotate(132,500,230)"/>
+          <line x1="500" y1="92" x2="500" y2="368" stroke="#5BA3D0" stroke-width="0.5" transform="rotate(144,500,230)"/>
+          <line x1="500" y1="92" x2="500" y2="368" stroke="#5BA3D0" stroke-width="0.5" transform="rotate(156,500,230)"/>
+          <line x1="500" y1="92" x2="500" y2="368" stroke="#5BA3D0" stroke-width="0.5" transform="rotate(168,500,230)"/>
+        </g>
+
+        <!-- Pupil -->
+        <circle id="pupil-c" cx="500" cy="230" r="62" fill="url(#pG)"/>
+
+        <!-- Pupil inner depth -->
+        <circle cx="500" cy="230" r="50" fill="#020810" opacity="0.8"/>
+        <circle cx="500" cy="230" r="35" fill="#010509" opacity="0.9"/>
+
+        <!-- Main glint -->
+        <ellipse cx="464" cy="200" rx="18" ry="12" fill="url(#glint1)" opacity="0.92"/>
+        <!-- Small secondary glint -->
+        <ellipse cx="530" cy="252" rx="7" ry="5" fill="url(#glint2)" opacity="0.5"/>
+        <!-- Tiny sparkle -->
+        <circle cx="472" cy="195" r="3" fill="white" opacity="0.9"/>
+      </g>
+
+      <!-- Eyelash lines — upper -->
+      <g id="upper-lashes" opacity="0.6" stroke="rgba(180,210,240,0.5)" stroke-width="1.2" fill="none">
+        <line x1="200" y1="118" x2="195" y2="98"/>
+        <line x1="260" y1="90" x2="256" y2="70"/>
+        <line x1="330" y1="68" x2="328" y2="47"/>
+        <line x1="400" y1="52" x2="400" y2="30"/>
+        <line x1="470" y1="43" x2="471" y2="22"/>
+        <line x1="540" y1="43" x2="541" y2="22"/>
+        <line x1="610" y1="52" x2="611" y2="30"/>
+        <line x1="675" y1="67" x2="678" y2="46"/>
+        <line x1="738" y1="90" x2="742" y2="70"/>
+        <line x1="798" y1="118" x2="804" y2="98"/>
+      </g>
+
+      <!-- Eye outline -->
+      <path d="M 30,230 Q 500,20 970,230" fill="none" stroke="rgba(91,163,208,0.55)" stroke-width="1.5" filter="url(#softGlow)"/>
+      <path d="M 30,230 Q 500,440 970,230" fill="none" stroke="rgba(91,163,208,0.3)" stroke-width="1"/>
+
+      <!-- Corner dots -->
+      <circle cx="32" cy="230" r="4" fill="rgba(91,163,208,0.35)"/>
+      <circle cx="968" cy="230" r="4" fill="rgba(91,163,208,0.35)"/>
+
+      <!-- EYELIDS — smooth curves only, no rectangle fill -->
+      <path id="ulid"
+        d="M 30,230 Q 500,20 970,230 Q 500,20 30,230 Z"
+        fill="#060D1A" opacity="0"/>
+      <path id="llid"
+        d="M 30,230 Q 500,440 970,230 Q 500,440 30,230 Z"
+        fill="#060D1A" opacity="0"/>
+    </svg>
+  </div>
+
+  <!-- Name over eye -->
+  <div class="hero-txt">
+    <h1 class="hero-name">Drishti</h1>
+    <p class="hero-sub">Vision · Intelligence · Clarity</p>
+  </div>
+
+  <div class="scroll-hint">
+    <div class="s-line"></div>
+    <span class="s-txt">Scroll</span>
+  </div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker">
+  <div class="tk-track">
+    <span class="tk"><span class="tk-d"></span>Sales Analytics</span>
+    <span class="tk"><span class="tk-d"></span>Healthcare Intelligence</span>
+    <span class="tk"><span class="tk-d"></span>Financial Performance</span>
+    <span class="tk"><span class="tk-d"></span>Marketing ROI</span>
+    <span class="tk"><span class="tk-d"></span>AI-Generated Insights</span>
+    <span class="tk"><span class="tk-d"></span>Real-Time Dashboards</span>
+    <span class="tk"><span class="tk-d"></span>Custom Data Upload</span>
+    <span class="tk"><span class="tk-d"></span>Google Gemini AI</span>
+    <span class="tk"><span class="tk-d"></span>Sales Analytics</span>
+    <span class="tk"><span class="tk-d"></span>Healthcare Intelligence</span>
+    <span class="tk"><span class="tk-d"></span>Financial Performance</span>
+    <span class="tk"><span class="tk-d"></span>Marketing ROI</span>
+    <span class="tk"><span class="tk-d"></span>AI-Generated Insights</span>
+    <span class="tk"><span class="tk-d"></span>Real-Time Dashboards</span>
+    <span class="tk"><span class="tk-d"></span>Custom Data Upload</span>
+    <span class="tk"><span class="tk-d"></span>Google Gemini AI</span>
+  </div>
+</div>
+
+<!-- ══ ABOUT ══ -->
+<section id="about">
+  <!-- Animated grid -->
+  <div class="grid-lines" id="grid-lines"></div>
+  <!-- Floating orbs -->
+  <div class="orb" style="width:400px;height:400px;top:-100px;right:-100px;animation-duration:7s;"></div>
+  <div class="orb" style="width:300px;height:300px;bottom:-80px;left:-80px;animation-duration:9s;animation-delay:2s;"></div>
+
+  <div class="about-inner">
+    <div>
+      <p class="stag reveal">Who We Are</p>
+      <h2 class="stitle reveal d1">Intelligence built<br>for the <em>real world.</em></h2>
+      <p class="sbody reveal d2">Drishti — meaning "vision" in Sanskrit — is a business intelligence platform engineered to transform complex, multi-domain data into decisions that matter. We don't just visualize data. We make it speak.</p>
+      <p class="sbody reveal d3">From hospital readmission rates to marketing ROI, from budget variances to product-level margins — Drishti delivers clarity across every layer of your organization, powered by Google Gemini AI.</p>
+      <div class="cnts reveal d4">
+        <div class="cnt"><div class="cnt-v" data-target="11000">0</div><div class="cnt-l">Records Analyzed</div></div>
+        <div class="cnt"><div class="cnt-v" data-target="4">0</div><div class="cnt-l">Industry Domains</div></div>
+        <div class="cnt"><div class="cnt-v">Live</div><div class="cnt-l">AI Insight Engine</div></div>
+        <div class="cnt"><div class="cnt-v">Free</div><div class="cnt-l">To Deploy & Use</div></div>
+      </div>
+    </div>
+    <div>
+      <p class="stag reveal">Industries We Serve</p>
+      <div>
+        <div class="dom reveal d1"><span class="dom-n">01</span><div><div class="dom-nm">Business & Retail</div><div class="dom-ds">Sales performance, regional breakdowns, product profitability, customer return rates and channel effectiveness.</div></div></div>
+        <div class="dom reveal d2"><span class="dom-n">02</span><div><div class="dom-nm">Healthcare Systems</div><div class="dom-ds">Patient admissions, diagnosis trends, readmission risk, treatment cost analysis and insurance coverage gaps.</div></div></div>
+        <div class="dom reveal d3"><span class="dom-n">03</span><div><div class="dom-nm">Financial Institutions</div><div class="dom-ds">Budget vs actual variance, overspend detection, quarterly forecasting and expense breakdowns.</div></div></div>
+        <div class="dom reveal d4"><span class="dom-n">04</span><div><div class="dom-nm">Marketing & Growth</div><div class="dom-ds">Campaign ROI, CTR, segment conversion, spend efficiency and AI-generated strategy recommendations.</div></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ SERVICES ══ -->
+<section id="services">
+  <!-- Data flow lines -->
+  <div class="data-flow" id="data-flow"></div>
+
+  <div class="svc-inner">
+    <div class="svc-hdr">
+      <p class="stag reveal">What We Offer</p>
+      <h2 class="stitle reveal d1">End-to-end intelligence,<br>across every <em>domain.</em></h2>
+    </div>
+    <div class="svc-grid">
+      <div class="svc reveal"><div class="svc-n">01</div><div class="svc-ic">◈</div><div class="svc-nm">Interactive Dashboards</div><div class="svc-ds">Multi-page filterable dashboards in real time. Drill by region, department, period or segment with every chart updating instantly.</div><span class="svc-tg">Sales · Finance · Healthcare</span></div>
+      <div class="svc reveal d1"><div class="svc-n">02</div><div class="svc-ic">◎</div><div class="svc-nm">AI-Generated Insights</div><div class="svc-ds">Every dashboard paired with AI analysis — key insights, risks and specific recommendations in plain business language.</div><span class="svc-tg">Powered by Google Gemini</span></div>
+      <div class="svc reveal d2"><div class="svc-n">03</div><div class="svc-ic">⊕</div><div class="svc-nm">Custom Data Upload</div><div class="svc-ds">Upload any CSV or Excel file and receive instant auto-generated charts, summaries and AI analysis — no code required.</div><span class="svc-tg">CSV · XLSX · Any Domain</span></div>
+      <div class="svc reveal d2"><div class="svc-n">04</div><div class="svc-ic">◇</div><div class="svc-nm">Healthcare Analytics</div><div class="svc-ds">Patient outcome tracking, readmission rate analysis, cost-per-diagnosis benchmarking and satisfaction monitoring.</div><span class="svc-tg">Clinical · Operational</span></div>
+      <div class="svc reveal d3"><div class="svc-n">05</div><div class="svc-ic">△</div><div class="svc-nm">Financial Intelligence</div><div class="svc-ds">Budget variance detection, overspend alerts, quarterly trend analysis and expense breakdowns — AI-narrated.</div><span class="svc-tg">CFO · Finance · Operations</span></div>
+      <div class="svc reveal d4"><div class="svc-n">06</div><div class="svc-ic">○</div><div class="svc-nm">Marketing Performance</div><div class="svc-ds">Track ROI, CTR, conversions and spend efficiency across campaigns with AI recommendations to reallocate budget.</div><span class="svc-tg">Growth · Performance</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ CTA ══ -->
+<section id="cta">
+  <div class="ring" style="width:300px;height:300px;animation-delay:0s;"></div>
+  <div class="ring" style="width:300px;height:300px;animation-delay:1.5s;"></div>
+  <div class="ring" style="width:300px;height:300px;animation-delay:3s;"></div>
+  <div class="cta-glow"></div>
+  <div class="cta-inner">
+    <h2 class="cta-t reveal">Ready to see your data differently?</h2>
+    <p class="cta-b reveal d1">Drishti gives your team the intelligence to act — not just observe. Explore your data with AI-powered clarity, no setup required.</p>
+    <a href="#" class="cta-btn reveal d2">Launch the Platform <span class="cta-arr">→</span></a>
+  </div>
+</section>
+
+<footer>
+  <div class="ft-logo">Drishti<span>.</span></div>
+  <div>© 2025 Drishti Analytics. All rights reserved.</div>
+  <div>Python · Streamlit · Gemini AI</div>
+</footer>
+
+<script>
+// ══ STAR FIELD ══
+const canvas=document.getElementById('stars');
+const ctx=canvas.getContext('2d');
+canvas.width=window.innerWidth;canvas.height=window.innerHeight;
+const stars=[];
+for(let i=0;i<180;i++){
+  stars.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,r:Math.random()*1.2+0.2,o:Math.random()*0.6+0.1,s:Math.random()*0.008+0.002,d:Math.random()>0.5?1:-1});
+}
+function drawStars(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  stars.forEach(s=>{
+    s.o+=s.s*s.d;
+    if(s.o>0.8||s.o<0.08)s.d*=-1;
+    ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
+    ctx.fillStyle=`rgba(180,210,240,${s.o})`;ctx.fill();
+  });
+  requestAnimationFrame(drawStars);
+}
+drawStars();
+window.addEventListener('resize',()=>{canvas.width=window.innerWidth;canvas.height=window.innerHeight;});
+
+// ══ PARTICLES ══
+const ptc=document.getElementById('ptc');
+for(let i=0;i<22;i++){
+  const p=document.createElement('div');p.className='pt';
+  const s=Math.random()*3+1;
+  p.style.cssText=`width:${s}px;height:${s}px;left:${Math.random()*100}%;animation-duration:${Math.random()*20+12}s;animation-delay:${Math.random()*20}s;opacity:${Math.random()*0.4+0.1};`;
+  ptc.appendChild(p);
+}
+
+// ══ NAV ══
+const nav=document.getElementById('nav');
+window.addEventListener('scroll',()=>nav.classList.toggle('scrolled',window.scrollY>60),{passive:true});
+
+// ══ EYE EYELID ANIMATION ══
+const ulid=document.getElementById('ulid');
+const llid=document.getElementById('llid');
+const irisC=document.getElementById('iris-c');
+const pupilC=document.getElementById('pupil-c');
+const fibers=document.getElementById('fibers');
+const upperLashes=document.getElementById('upper-lashes');
+
+let eyeOpen=1;    // current
+let eyeTarget=1;  // target
+let rafId=null;
+let lastScrollY=window.scrollY;
+
+function applyEye(o){
+  // o: 1=fully open, 0=fully closed
+  // Upper lid: path goes from y=20 (open) down to y=230 (closed center)
+  const uQ=20+(230-20)*(1-o);     // control point y for upper curve
+  const lQ=440-(440-230)*(1-o);   // control point y for lower curve
+
+  ulid.setAttribute('d',`M 30,230 Q 500,${uQ} 970,230 L 970,-10 L 30,-10 Z`);
+  llid.setAttribute('d',`M 30,230 Q 500,${lQ} 970,230 L 970,470 L 30,470 Z`);
+
+  // Show lids only when not fully open
+  ulid.setAttribute('opacity', o>0.98?0:1);
+  llid.setAttribute('opacity', o>0.98?0:1);
+
+  // Iris shrinks as eye closes
+  const sc=0.4+o*0.6;
+  const tx=500*(1-sc), ty=230*(1-sc);
+  irisC.setAttribute('transform',`translate(${tx},${ty}) scale(${sc})`);
+  pupilC.setAttribute('transform',`translate(${tx},${ty}) scale(${sc})`);
+  fibers.setAttribute('transform',`translate(${tx},${ty}) scale(${sc})`);
+
+  // Lashes fade with eye
+  upperLashes.setAttribute('opacity', o*0.6);
+
+  // Aura dims
+  document.querySelector('.eye-aura').style.opacity=0.4+o*0.6;
+}
+
+function animEye(){
+  const diff=eyeTarget-eyeOpen;
+  if(Math.abs(diff)<0.003){eyeOpen=eyeTarget;applyEye(eyeOpen);rafId=null;return;}
+  eyeOpen+=diff*0.07;
+  applyEye(eyeOpen);
+  rafId=requestAnimationFrame(animEye);
+}
+
+function triggerEye(){
+  const heroH=document.getElementById('hero').offsetHeight;
+  const pct=Math.min(window.scrollY/heroH,1);
+  const scrollDir=window.scrollY-lastScrollY;
+  lastScrollY=window.scrollY;
+
+  if(window.scrollY<heroH){
+    // Smoothly close as scrolling down, open as scrolling up
+    eyeTarget=Math.max(0,1-pct*1.1);
+  } else {
+    eyeTarget=0;
+  }
+
+  if(!rafId){rafId=requestAnimationFrame(animEye);}
+}
+
+window.addEventListener('scroll',triggerEye,{passive:true});
+applyEye(1);
+
+// Mouse parallax on eye
+document.addEventListener('mousemove',e=>{
+  if(window.scrollY>window.innerHeight*0.4)return;
+  const cx=window.innerWidth/2,cy=window.innerHeight/2;
+  const dx=(e.clientX-cx)/cx*10;
+  const dy=(e.clientY-cy)/cy*5;
+  document.getElementById('eye-wrap').style.transform=`translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px))`;
+});
+
+// ══ GRID LINES (About section) ══
+const gl=document.getElementById('grid-lines');
+for(let i=1;i<8;i++){
+  const v=document.createElement('div');
+  v.className='gl gl-v';
+  v.style.cssText=`left:${i*12.5}%;animation-delay:${i*0.3}s;animation-duration:${3+i*0.4}s;`;
+  gl.appendChild(v);
+}
+for(let i=1;i<6;i++){
+  const h=document.createElement('div');
+  h.className='gl gl-h';
+  h.style.cssText=`top:${i*18}%;animation-delay:${i*0.5}s;animation-duration:${4+i*0.3}s;`;
+  gl.appendChild(h);
+}
+
+// ══ DATA FLOW LINES (Services section) ══
+const df=document.getElementById('data-flow');
+for(let i=0;i<8;i++){
+  const line=document.createElement('div');
+  line.className='df-line';
+  line.style.cssText=`top:${8+i*12}%;animation-duration:${5+i*1.2}s;animation-delay:${i*0.8}s;width:${40+Math.random()*30}%;opacity:${0.3+Math.random()*0.4};`;
+  df.appendChild(line);
+}
+
+// ══ SCROLL REVEAL ══
+const ro=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');}});
+},{threshold:0.1});
+document.querySelectorAll('.reveal,.reveal-left,.reveal-right').forEach(el=>ro.observe(el));
+
+// ══ COUNTERS ══
+const co=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(!e.isIntersecting)return;
+    const t=parseInt(e.target.dataset.target);
+    if(!isNaN(t)){
+      let st=null;const dur=2200;
+      (function step(ts){
+        if(!st)st=ts;
+        const p=Math.min((ts-st)/dur,1),ease=1-Math.pow(1-p,3),v=Math.floor(ease*t);
+        e.target.textContent=t>=1000?Math.floor(v/1000)+'K+':v;
+        if(p<1)requestAnimationFrame(step);
+        else e.target.textContent=t>=1000?Math.floor(t/1000)+'K+':t;
+      })(performance.now());
+    }
+    co.unobserve(e.target);
+  });
+},{threshold:0.5});
+document.querySelectorAll('[data-target]').forEach(el=>co.observe(el));
+</script>
+</body>
+</html>
