@@ -173,15 +173,19 @@ with st.sidebar:
     </div>
     """, unsafe_allow_html=True)
 
-# Use session state to track which section is active
-if "active_section" not in st.session_state:
-    st.session_state.active_section = "Overview"
+# Determine active page using session state
+if "active" not in st.session_state:
+    st.session_state.active = "Overview"
 
-# Determine active page
-if page2 == "New Dataset":
-    active = "New Dataset"
-else:
-    active = page
+# Check which radio was changed last
+if st.session_state.get("last_page") != page:
+    st.session_state.active = page
+    st.session_state.last_page = page
+elif st.session_state.get("last_page2") != page2:
+    st.session_state.active = page2
+    st.session_state.last_page2 = page2
+
+active = st.session_state.active
 
 # ── AI SECTION HELPER ────────────────────────────────────────────
 def ai_section(key, summary, domain):
